@@ -87,7 +87,7 @@ ng version
 
 ### Générer une application Angular
 
-Angular CLI dispose d'une comande pour génèrer le socle de l'application.
+Angular CLI dispose d'une commande pour génèrer le socle de l'application.
 
 **ng new ng-pokemon-app --minimal --style=css**
 Paramètrage du socle de 'application qu'on va génèrer: options appliquées au projet sont --minimal = version allégée du socle, style à CSS pour le style.
@@ -96,3 +96,10 @@ Génère une architecture de dossiers, et cetains fichiers pour notre nouveau pr
 Notre projet se nomme ng-pokemon-app.
 
 ### Les fichiers générés par Angular CLI?
+
+node_modules
+src: sources du projet
+app: code source
+assets: images du projet ...
+env: var d'env du projet
+
