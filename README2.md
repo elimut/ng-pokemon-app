@@ -268,4 +268,15 @@ Deux fichiers pour décrire le composant: un pour l'affichage en HTML et un qui 
 
 ### Découvrir l'interpolation
 
-Permet à Angular d'afficher nos propriétés côté classe du composant dans le template
+Permet à Angular d'afficher nos propriétés côté classe du composant dans le template.
+On a la prpriété pokemonList, mais côté template elle n'est affichée nulle part.
+L'on va utiliser l'interpolation pour afficher la liste des pokemons par leurs noms.
+L'ajout d'interpolation pousse les propriétés vers le template.
+Interpolation ne marche pas sur des objets. Cela fonctionne sur des valeurs simples, types primitifs mais n'affiche pas des iterables (tableaux, objets).
+Ca n'est pas le seul moyen de pousser des données du composant vers le template.
+
+### La syntaxe de liaison des données
+
+Il existe plusieurs manières de pousser les données de la classe du composant vers le tempalte.
+
+- **Propriété d'éléments**: <img [src]= someImageUrl> => on utilise les [] pour lier directement la source de l'image à la propriété du composant someImageUrl, ou <img src=<<{{ someImageUrl}}>>, on retire les crochets sources et on utilise à l'intérieur des accolades l'interpolation.
