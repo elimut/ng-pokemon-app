@@ -19,7 +19,7 @@ C'est un outil qui permet de travailler de manière plus efficace et organisée.
 ## Site web ou application web
 
 Séparation partie cliente du site interprétée par le nav(js, HTML, CSS) et celle de la partie serveur (PHP, Java).
-Un site web au sens traditionnel est donc une application serveur qui envoie des pages HTML dans le naav du client à chaque fois qu'il le demande.
+Un site web au sens traditionnel est donc une application serveur qui envoie des pages HTML dans le nav du client à chaque fois qu'il le demande.
 Quand l'user navigue sur le site, et change de page, il faut faire une requête serveur... couteux, plus simple avec JS.
 Une application web est différente et correspond à ce besoin, il s'agit une page HTML qui contient suffisamment de JS pour fonctionner en autonomie une fois que le serveur l'a envoyée au client. Une seule page est envoyée par le serveur pour l'ensemble du site, puis le JS prend le relais pour gérer la nav en affichant ou masquant des éléments HTML => plus rapide, pas de rechargement de toute la page = architecture **ESPA** = single page applications.
 
@@ -90,7 +90,7 @@ ng version
 Angular CLI dispose d'une commande pour génèrer le socle de l'application.
 
 **ng new ng-pokemon-app --minimal --style=css**
-Paramètrage du socle de 'application qu'on va génèrer: options appliquées au projet sont --minimal = version allégée du socle, style à CSS pour le style.
+Paramètrage du socle de l'application qu'on va génèrer: options appliquées au projet sont --minimal = version allégée du socle, style à CSS pour le style.
 
 Génère une architecture de dossiers, et cetains fichiers pour notre nouveau projet.
 Notre projet se nomme ng-pokemon-app.
@@ -102,4 +102,37 @@ src: sources du projet
 app: code source
 assets: images du projet ...
 env: var d'env du projet
+angular json: il contient la config d'angular cli. (skipt tests: génération des fichiers de test, ...)
+package json: angula core = framework angular
+tsconfig.app: config du c**ompilateur** TS pour le projet angular
+
+### Le composant racine
+
+Angular CLI a généré un premier composant.
+
+src app app.components.ts
+génération par défaut => 3 parties différentes:
+import des éléments nécessaires pour le bloc suivant avec @component, décorateur qui permet de construire un composant web avec Angular.
+
+L'annotation component doit être composée au minimum de 2 options:
+**selector** => donne un nom au composant, dans page web balise app-root sera insérée. Elémént personnalisé. <app-root>, code valide, car Angular construit par dessus les composants web on peut donc personnaliser nos éléments HTML.
+**template** => instruction qui définit le code HTML associé à ce composant web. Syntaxe **bactique**.
+ES6 décrit une chaîne de caratère sans devoir concaténer avec +.
+Double accolade qui permet d'afficher la valeur d'une propriété du composant.
+La propriété du composant sont en dessous.
+On décrit une prorpiété pour le composant AppComponent, il possède la valeur ng-pokemon-app, et ensuite Angular va être capable de pousser cette valeur dans le template au dessus.
+
+**export** => qui permet d'exporter le composant pour le rendre disponible ailleurs dans l'application.
+
+    import { Component } from '@angular/core';
+
+    @Component({
+        selector: 'app-root',
+        template: `<h1>Welcome to {{title}}!</h1>`
+        })
+        export class AppComponent {
+        title = 'ng-pokemon-app';
+    }
+
+
 
