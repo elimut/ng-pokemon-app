@@ -279,4 +279,184 @@ Ca n'est pas le seul moyen de pousser des données du composant vers le template
 
 Il existe plusieurs manières de pousser les données de la classe du composant vers le tempalte.
 
-- **Propriété d'éléments**: <img [src]= someImageUrl> => on utilise les [] pour lier directement la source de l'image à la propriété du composant someImageUrl, ou <img src=<<{{ someImageUrl}}>>, on retire les crochets sources et on utilise à l'intérieur des accolades l'interpolation.
+- **Propriété d'éléments**: <img [src]= "someImageUrl"> => on utilise les [] pour lier directement la source de l'image à la propriété du composant someImageUrl, ou <img src="{{ someImageUrl }}">, on retire les crochets sources et on utilise à l'intérieur des accolades l'interpolation.
+- **Propriété d'atributs**: <label [attr.for]= "someLabelId"> ... </label> => élément attr.nom attribut de l'élément label ue l'on veut lier avec la propriété passée entre les accolades.
+- **Propriété de la classe**: <div [class.special]= "isSpecial">Special</div> => pour attribuer ou non la classe special à l'élément div. Lier des classes des éléments HTML, dynamique.
+- **Propriété de style**: <button [stye.color]="isSpecial?`red`:`green`">Special</div> => lier le style css en les pilotants depuis la classe du composant. opérateur ternaire lié à la propriété du composant isSpecial.
+
+Tout ces mécanismes permettent uniquement de pousser des données de classe du composant vers le template, mais pas dans le sens inverse.
+Si événements côté template, il faut pouvoir les remonter du côté de la classe.
+
+### Gérer les intéractions utilisateur
+
+Intercepter les événements qui pourraient se produire côté template.
+Toutes les actiohns types clic, ..., vont lever des événements dans le DOM (représentation structurée de la page HTML où chaque balise HTML représente un noeud, arbre qui représente la page web) avec lequel on voudrait pouvoir interagir.
+Il faut lier n'importe quel événement du DOM à une méthode côté class du composant, en utilisant la syntaxe de liaison d'événements d'Angular.
+
+Syntaxe pour écouter un événement avec Angular est simple:
+côté template => (nomEvent) et lui passerla méthode de la class du composant qu'on veut exécuter.
+app.component.html
+
+    <p (click)="selectPokemon(pokemonList[0])">{{ pokemonList[0].name }}</p>
+    <!-- clic appel méthode selectPokemon -->
+
+### Intercepter tous les événements du DOM
+
+Intéraction avec l'objet event qui est remonté par le DOM et qui est un objet natif.
+L'on pourra intéragir avec n'importe quel type d'évent sur n'importe quel noeud du DOM.
+, on va rajouter un champ input où l'user peut ajouter un nombre qui sera l'index du pokémon auquel il veut accèder.
+
+### Les variables référncées dans le template
+
+Peu agréable de travailler avec $event, et Angular propose une autre fonctionnalité qui permet de déclarer des variables locales dans le template. Elles nous garantissent un accès direct sur l'élément du DOM depuis le template.
+Ca évite de caster l'élément du DOM sur lequel a lieu l'événement.
+
+Dans le template on peut déclarer ds variables, grâce à #.
+app.component
+
+#input, on peut avoir accès à cet élément sans avoir à caster des choses dans la logique de la vue.
+
+
+    <input 
+        #input
+        (keyup)="0"
+        //event qui pousse ce qui est tapé par l'user, pousse la valeur dans l'interpolation <p>input.value. 0 pour ne pas exécuter le code à ce moment là, juste mise à jour côté template par angular.
+        type="number"
+        (click)="selectPokemon($event)"
+    />
+    <!-- !$event-- event remonté par le DOM, , erreur car selectPokemon accepte un pokémon => changer contrat -->
+    <!-- #input déclaration de variable référencée dans le template -->
+    <p>{{ input.value }}</p>
+    <!-- interpolation pour afficher directement le contenu tapé par l'user -->
+
+Permet d'avoir directement accès à l'objet du DOM input et intéragir avec.
+Evite le cast.
+
+### Créer un flux de données bidirectionnel
+
+Construire une petite interface pour que l'user sélectionne un nombre et on lui indique le pokémon choisi.
+
+    pokemonSelected: Pokemon;
+  // prop de type Pokemon, choisie par user
+
+A chaque fois que l'user va taper une touche dans le champ input, on va garder la variable référencée dans le template #input, et on va intercepter l'event keyup.
+
+Plus d'event à intéragir sur selectPokemon mais un id de pokémon.
+
+    <p>{{ pokemonSelected?.name }}</p>
+    <!--à l'init du composant pokemonSelected n'est pas défini donc =undefine, on dmd à accèder à la prop name undefined => erreur => ? si n'est pas déf n'affiche rien-->
+
+Il faut:
+- arrêter de raisonner en index dans le tableau pour l'user 1 = Bulbizarre,
+Quand il tape un id, pas index => id.
+    selectPokemon(pokemonId: string) {
+        const id = +pokemonId;
+        const index =id +1;
+        // réup l'identifiant et pas index
+        console.log(`Vous avez cliqué sur le pokémon ${this.pokemonList[index].name}`);
+    }
+=> chercher dans le tableau celui qui a l'id qui correspon à ce que l'on cherche. On va donc chercher le pokemon dont on a besoin avec find de JS.
+
+### Détecter l'appui sur la touche entrée
+
+Actuellement saisi chiffre lance la recherche et touche entrée on lui envoie les informations du pokémon remonté.
+Angular permet de filtrer les event du clavier:
+on peut écouter uniquement la touche entrée en utilisant un pseuod event qui s'appelle keyup.enter. On en remonte que l'événement au template lors de la touche entrée.
+On peut slectionner les event que l'on veut écouter au niveau du template = **pseudos événements**.
+
+### Conditionner un affichage avec ngIf
+
+Comment conditionner l'affichage dans le template.
+Si aucun pokémon => affichage d'autre chose = **ngIf**.
+
+    <p *ngIf=""> 
+        Vous avez sélectionné le pokémon: {{ pokemonSelected?.name }}
+    </p>
+    * indique à angular que l'on a mis en place une directive structurelle.
+ngIf prend une condition en paramètre. Elle vient généralement de la class du composant.
+
+    pokemonSelected: Pokemon | undefined;
+    true | false
+
+    <p *ngIf="pokemonSelected"> 
+        Vous avez sélectionné le pokémon: {{ pokemonSelected?.name }}
+    </p>
+Affichage ou non dans la vue en fonction de la propriété.
+
+Angular retire du DOM l'élément. 
+On peut piloter l'interface depuis le composant web.
+
+        <p *ngIf="pokemonSelected"> 
+        Vous avez sélectionné le pokémon: {{ pokemonSelected?.name }}.
+    </p>
+    <p *ngIf="!pokemonSelected"> 
+        Aucun pokémon n'a été trouvé pour le moment.
+    </p>
+
+**Cration de templates conditionnels**.
+
+### Afficher une liste avec ngFor
+
+Autre directive structurelle: **ngFor**, boucle sur des tableaux pour afficher les éléments du tableau.
+
+    <p>{{ pokemonList[0].name }}</p>
+    <p>{{ pokemonList[1].name }}</p>
+    <p>{{ pokemonList[2].name }}</p>
+    <p>{{ pokemonList[3].name }}</p>
+    <p>{{ pokemonList[4].name }}</p>
+    <p>{{ pokemonList[5].name }}</p>
+    <p>{{ pokemonList[6].name }}</p>
+    <p>{{ pokemonList[7].name }}</p>
+    <p>{{ pokemonList[8].name }}</p>
+    <p>{{ pokemonList[9].name }}</p>
+    <p>{{ pokemonList[10].name }}</p>
+    <p>{{ pokemonList[11].name }}</p>
+
+        <p *ngFor="let pokemon of pokemonList">
+        {{ pokemonList[0].name }}
+    </p>
+    <!-- directive structurelle *, tableau doit venir de la classe du composant -->
+Elles sont disponibles automatiquement dans tous les templates de l'application, car elles sont ajoutées par le module racine browser module.
+
+Quand on créerra nos propres modules, on veillera à importer à l'intérieur un autre modul qui s'appelle **Common module**, et qui met à dispodition des directives.
+
+### Exercice: modifier le template de l'application
+
+Materialize, biblioth_que CSS.
+Ajout de Materialize dans HTML: 
+[materialize](https://materializecss.com/getting-started.html)
+On a ainsi les classes CSS disponibles dans les templates.
+
+Comment mettre les classes de materialize ensemble avec la librairie ngFor
+
+## Les directives
+
+### Qu'est ce qu'une directive?
+
+C'est une classe Angular qui ressemble beaucoup à un composan, sauf qu'elle n'a pas de template.
+La class component hérite de la class directive.
+Au lieu d'annoter notre classe directive avec @component, nous allons utiliser @directive.
+**Elle permet d'intéragir avec des éléments HTML d'une page en leur attachant un comportement spécifique**.
+Il peut y avoir plusieurs directives appliquées à un élément.
+Elle possède un sélecteur CSS qui indique au framework où l'activer dans le template.
+Lorsqu'Angular trouve une directive dans un template HTML, il instancie aussi la classe directive correspondante et donne à cette instace le contrôle sur la portion du DOM qui lui revient.
+
+Il en existe trois types:
+- **les composants**: app.component.ts est une directive,
+- **les directives d'attributs**: elles peuvent modifier le comportement des éléments HTML, des attributs, des propriétés et des composants. Elles sont représentées habituellement par des attributs au sein des balises HTML.
+- **les directives structurelles**: responsables de la mise en forme d'une certaine manière les éléments HTML de notre page en ajoutant, retirant, ou manipulant des éléments et leurs fils (exemple ngIf, ngFor,...).
+
+### Créer une directive d'attribut
+
+Cela va nous permettre de changer l'apparence ou le comportement d'un élément.
+
+BorderCardDirective => bordure de couleur au survol du curseur et hauteur sur la card.
+Avec Angular CLI: 
+ng generate directive border-card
+
+REATE src/app/border-card.directive.ts (149 bytes)
+UPDATE src/app/app.module.ts (1302 bytes)
+A déclaré dans les modules, et importé.
+border-card.directive.ts => @directive
+
+
