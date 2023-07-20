@@ -65,22 +65,13 @@ interpolation pour afficher directement le contenu tapé par l'user -->
     </div>
 </div> -->
 
-<h1 class="center">Liste de Pokémons</h1>
-
-<div class="container">
-    <div class="row">
-        <div *ngFor="let pokemon of pokemonList" class="col m4 s6">
-            <div class="card horizontal pink lighten-4 z-depth-3">
-                <div class="card-image">
-                    <img src="{{ pokemon.picture }}" alt="Pokemon image">
-                </div>
-                <div class="card-stacked">
-                    <div class="card-content">
-                        <p>{{ pokemon.name }}</p>
-                        <p><small>{{ pokemon.created }}</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<nav>
+    <div class="nav-wrapper pink lighten-5">
+        <a href="/pokemons" class="brand-logo center">
+            Pokédex Anne-Sophie
+        </a>
     </div>
-</div>
+</nav>
+
+<router-outlet></router-outlet>
+

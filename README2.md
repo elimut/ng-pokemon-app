@@ -460,3 +460,222 @@ A déclaré dans les modules, et importé.
 border-card.directive.ts => @directive
 
 
+    import { Directive } from '@angular/core';
+
+    @Directive({
+        selector: '[appBorderCard]'
+        })
+        export class BorderCardDirective {
+
+        constructor() { }
+
+    }
+
+On va réupèrer l'élément qui vient du DOM dans le constructeur de la directive, pour intéragir avec l'élément sur lequel est appliqué la directive.
+Ici récupèrer la carte pour ajout de la bordure en hover.
+
+### Prendre en compte les actions utilisateurs
+
+Mettre en place la directive lors du hover:
+- détecter lorsque le curseur entre ou sort de la liste,
+- définir une action pour chacun des deux événements.
+
+=> **@HostListener**, cette annotation permet de lier une méthode de la directive à un événement donné.
+
+On va créer deux nouvelles méthodes dans notre directive.
+mouseEnter et mouseLeave.
+
+Ajout dans les importations HostListener, nous allons l'utiliser pour écouter les événements.
+
+### Utiliser la directive
+
+Il faut appliquer la directive dans template du composant.
+app.component.html
+
+### Ajouter un paramètre à la directive
+
+Notre directive n'est pas personnalisable à chaque usage (couleur unique).
+Quand un user appelera cette directive dans un template, il sera possible de personnaliser la couleur.
+
+L'on veut préciser une propriété d'entrée pour la directive avec la notation **@input**.*L'on va ajouter une propriété borderColor pour paramètrer la couleur des bordures.
+
+import input depuis la librairie angular core.
+sous le constructeur nous allons déclarer une nouvelle propriété border color avec input.
+
+    @Input("appBorderCard") borderColor: string;
+app.Component.html => appBorderCard="red" indiquer bordure rouge
+
+npm start
+
+**alias**: il existe deux manières de déclarer une propriété d'entrée, avec ou sans alias.
+sans alias, obligation d'utiliser le nom de la directive pour nommer la propriété, mais pas adapté.
+Grâce à l'alias l'on peut nommer la ppt de la directive comme souhaité, il faut spécifier le nom de la directive dans l'argument @Input.
+
+### Améliorer notre directive de notre directive d' ttribut
+
+Remplacer les valeurs codées en dur par des propriétés:
+- initialColor = affichée au chargement de la page,
+- defaultColor = défaut si aucune couleur de bordure n'a été précisée par l'user dans le template,
+- defautHeight.
+
+## Les pipes
+
+Grâce à l'interpolation, l'on peut afficher les données dans les templates.
+Mais parfois, les données récupérées ne peuvent pas être affichées à l'user.
+(date)
+
+Il faut formater l'affichage.
+Il faut parfois appliquer les mêmes transformations dans plusieurs templates différents.
+=> **pipes**.
+
+### Utiliser un pipe
+
+Affichage de date formatée pour l'user
+    <p><small>{{ pokemon.created }}</small></p>
+    ajout du pipe date, l'on place l'opérateur à droite de la propriété que l'on souhaite transformer: | suivi du nom du pipe que l'on souhaite utiliser.
+
+    <p><small>{{ pokemon.created | date }}</small></p>
+Affichage par défaut.
+
+### Les pipes disponibles par défaut
+
+DatePipe,
+UpperCasePipe,
+CurrencyPipe (affichage des devises),
+...
+[angular pipes](https://angular.io/guide/pipes)
+
+### Combiner plusieurs pipes
+
+Utiliser plusieurs pipes différentes pour une même propriété:
+
+    <p><small>{{ pokemon.created | date | uppercase }}</small></p>
+
+**Les transformations des pipes s'appliquent de la gauche vers la droite.**
+
+### Paramètrer un pipe
+
+Utilisation plus poussée.
+On peut leurs passer des paramètres.
+On va passer un paramètre au pipe date:
+
+    <p><small>{{ pokemon.created | date:"dd/MM/yyyy" }}</small></p>
+
+### Créer un pipe personnalisé
+
+Création d'un pipe pokemonTypeColor pipe => renvoie une couleur correspondant aux types du pokémon.
+On va demander à Angular CI de génèrer le pipe.
+
+ng generate pipe pokemon-type-color 
+
+CREATE src/app/pokemon-type-color.pipe.ts (237 bytes)
+UPDATE src/app/app.module.ts (1395 bytes)
+
+    import { Pipe, PipeTransform } from '@angular/core';
+
+    @Pipe({
+        name: 'pokemonTypeColor'
+        })
+        export class PokemonTypeColorPipe implements PipeTransform {
+
+        transform(value: unknown, ...args: unknown[]): unknown {
+            return null;
+        }
+
+    }
+
+### Les routes
+
+L'application ne possède que d'un composant, accessible par défaut au démarrage.
+L'on va doter notre application d'un système de naviagtion.
+Avec Angular lors de la simulation, on peut revenir en arrière avec le bouton du nav.
+Les routes d'une application doivent être regroupées par grandes fonctionnalités au sein de modules.
+Exemple pokémons ensemble, authentification inscription ensembles.
+
+### Le fonctionnement
+
+Il faut au moins deux composants.
+Celui qui affiche les pokémons => /pokemons, et un pour rediriger vers le pokémon choisi => /pokemon/1 et un bouton retour.
+ 
+Création d'un composant liste pokémon et  détail-pkémon-component.
+
+### Génèrer deux nouveaux composants
+
+Dans le app.component.ts on crée les deux nouveaux composants.
+
+ng generate component list-pokemon --inline-template=false
+pour avoir le template à part, on surcharge avec inline => htmel et ts
+
+CREATE src/app/list-pokemon/list-pokemon.component.html (27 bytes)
+CREATE src/app/list-pokemon/list-pokemon.component.ts (195 bytes)
+UPDATE src/app/app.module.ts (1499 bytes)
+
+On va pouvoir travailler sur le routing.
+
+### Créer des routes
+
+On va commencer par déclarer les nouvelles routes dans app-routing.module.ts, on y déclare les deux routes des comosants créés et une route par défaut, lorsque l'user v charger l'application pour la première fois, il va charger une URL vide qui va arriver à la racine du projet.
+Les routes se déclarent comme un objet avec une option chemin qui est l'URL associé à un  composant.
+
+pathMatch? effet de bord
+
+Toujours déclarer les routes le splus spécifiques en haut et globales en bas acr écrase les déclarations de routes en dessous.
+
+### La balise <router-outlet>
+
+Pour commencer, côté template dans le composant racine il manque un élément => **router-outlet** qui permet de relier les routes qu'on a définies avec le template.
+
+Chaque fois que l'URL bouge dans le nav, Angular, récupère le composant associé et le palce à la place de la balise.
+
+    <router-outlet></router-outlet>
+app.component.html => est le composant qui va venir contenir les composants fils qui seront ajoutés dedans. Il est considéré comme le pére du composant.
+
+Par défaut, il va charger le composant racine, mais dans router outlet, il va venir injecter le contenu du composant qui correspond à l'URL.
+
+### Modifier le composant de la liste des pokémons
+
+La liste de pokémons est écrite dans le composant racine en dur.
+On va mettre le code dans le template list pokemon.
+Ce template est lié à une classe de composant pour récupèrer la liste de spokémons puisque la vue est construite ainsi. Mais dans la classe list pokémon, on a pas déclaré de pokemon list.
+Récupèrer la liste dans la logique app.
+
+### Dynamiser le composant de détail d'un pokémon
+
+Partie logique:
+récupèrer l'id du routeur, et chercher dans la liste le pokémon demandé => on va utliser le routeur d'angular, puis le pousser dans le template.
+On va passer par le constructeur.
+Pour injecter le service pour piloter les routes, afin d'accèder à l'id qui est dans la route.
+A l'init, l'on va chercher l'id dans l'URL:
+
+    const pokemonId: number = this.router.snapshot.paramMap
+    snapshot => obtenir la donnée à l'instant T, des paramètres transmis sous forme d'une paraMap(tableau).
+
+ActivatedRoute renvoie string ou null or pokemonId.
+
+### Brancher le template de détail d'un pokémon
+
+Voir detail-pokemon.component.ts
+
+### Ajouter une barre de navigation
+
+app.component.html
+
+On remplace le titre par une barre de nav.
+
+### Gestion de la navigation
+
+Naviguer grâce au service router.
+Clic retour et clip card.
+
+detail-pokemon => retour interception event clic
+
+### Gestion des erreurs 404
+
+Si URL non définit dans le dossier routes => application saute.
+Il faut afficher un message d'erreur à l'user.
+
+ng generate component page-not-found (fichier template avec != false)
+
+Interception des erreurs potentielles et rediriger toutes les URL qui n'existent pas vers ce composant chargé de gérer les erreurs.
+Dans le fichier de déclaration des routes => utilisation d'un opérateur ** qui va permettre d'intercepter toutes les routes au sein de l'application.
+Il intercepte toutes les routes, Angular lit les routes du haut vers le bas, 404 en haut => message d'erreur. 

@@ -8,13 +8,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 // import du composant dans le module racine
 import { BorderCardDirective } from './border-card.directive';
+import { PokemonTypeColorPipe } from './pokemon-type-color.pipe';
+import { ListPokemonComponent } from './list-pokemon/list-pokemon.component';
+import { DetailPokemonComponent } from './detail-pokemon/detail-pokemon.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 
 @NgModule({
   declarations: [
     // déclarations d'une liste de tous les components, directives, pipes... qui appartiennent au module pour fonctionner
     AppComponent,
-    BorderCardDirective
+    BorderCardDirective,
+    PokemonTypeColorPipe,
+    ListPokemonComponent,
+    DetailPokemonComponent,
+    PageNotFoundComponent
   ],
   imports: [
     // déclaration ds éléments nécessaires au module mais qui sont d'autres modules 
