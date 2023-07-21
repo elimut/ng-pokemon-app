@@ -28,7 +28,7 @@ Une application web est différente et correspond à ce besoin, il s'agit une pa
 Développement de grosses applications, développé par Google.
 
 - Les contrôleurs: l'architecture mvc est remplacée par une architecture réctive à base de composants web,
-- Les directives: retirées remplacés par les comosants, les directives d'attributs et les directives structurelles,
+- Les directives: retirées remplacés par les composants, les directives d'attributs et les directives structurelles,
 - Le $scope: simplifié et la nécessité d'injestcer des scops a été retiré,
 - Les modules: remplacés par les modules natifs de ES6,
 - jQlite: retirée,
@@ -679,3 +679,226 @@ ng generate component page-not-found (fichier template avec != false)
 Interception des erreurs potentielles et rediriger toutes les URL qui n'existent pas vers ce composant chargé de gérer les erreurs.
 Dans le fichier de déclaration des routes => utilisation d'un opérateur ** qui va permettre d'intercepter toutes les routes au sein de l'application.
 Il intercepte toutes les routes, Angular lit les routes du haut vers le bas, 404 en haut => message d'erreur. 
+
+## Les modules
+
+Comment créer un nouveau module pour l'app, pour mieux organiser le code.
+Module pour la gestion des pokémons.
+
+Les applications Angular sont modulaires, et elles possèdent leurs propre système de module.
+Chaque app possède au moins un module = module racine, qui est nommé app module par convention.
+
+Application > Root Module > feature Module A
+                          > feature Module B
+
+Il peut suffire pour de petites application, mais souvent l'on a besoin de plusieurs modules, ce sont des modules de fonctionnalités.
+Pour chaque modalité dans le projet, l'on va ajouter un nouveau module. Les modules de fonctionnalités sont un ensemble de classe et d'éléments dédiés à un domaine spécifique de l'app.
+Un module est toujours une classe avec le décorateur @NgModule, il prend en paramètre un objet avec des propriétés qui décrivent le module.
+Il y a en tout 5 propriétés declarations, ce sont les classes de vue qui appartienent à ce module.
+Angular a trois types de vues: les composants, les directives et les pipes, il faut toutes les déclarer.
+Il existe une option export, c'est un sous ensemble des déclarations qui doivent être visibles et utilisables dans les templates de composants d'autres modules.
+Import = toutes les classes exportées depuis d'autres modules dont on a besoin dans ce module, nécessaires au fonctionnement du module.
+Providers = cette propriété concerne les services et l'injection de dépendances que nous traiterons plus tard.
+Bootstrap = cette propriété ne concerne que le module racine, il faut y renseigner le composant racine app, celui affiché au lancement de l'application.
+Js a son propre système de module qui est sans rapport avec celui d'Angular, en JS chaque fichier est un module et tous les objets définis dans ce fichier appartiennet au module.
+Il déclare certains objets public, en les déclarant avec export. D'autres modules Js utilise import pour accèder à ces objets.
+Les systèmes de modules d'Angular et Js sont différents mais complémentaoires,; nous utilisons les deux pour écrire nos applications.
+
+### Créer un module
+
+Création d'un module permettant de centraliser tous les élements qui concernant la gestion des pokémons dans l'app.
+
+ng generate module pokemon
+
+L'on a pas de update car Angular ne saît pas ou créer ce fichier.
+
+L'on va pouvoir venir y centraliser toutes la gestion des pokémons, et venir le déclarer ici plutôt que dans le module racine.
+On va y brancher tous les élements: composant list, le détail, le pipe, directive, le modèle pokemon et le mock.
+On va déclarer les routes utilisées par le module plutôt que de passer par les rouites racines.
+
+Par défaut, l'on a la route 404, Angular n'intercepte que celle-ci.
+Voir déclarations des routes:
+app.module chargé en prmeier => on voit dans les imports que l'on charge d'abord les routes de app-routing.
+
+      imports: [
+        // déclaration ds éléments nécessaires au module mais qui sont d'autres modules 
+        BrowserModule,
+        AppRoutingModule,
+        PokemonModule
+    ],
+route vide redirect pokemons directement interceptée par **, 404. Les routes sont séparées par deux fichiers, on a app-routing en premier puis charge pokemonModule.
+
+        BrowserModule,
+        PokemonModule,
+        AppRoutingModule
+
+
+### Structurer l'architecture de l'application
+
+Il est plus simple de définir à l'avance l'architecture de l'application.
+
+Comment sera struturée l'application finale?
+Actuellement l'on a deux modules => AppModule et un sous module pour gérer les PokemonModule.
+
+L'on veut mettre en place un gestionnaire pour la connexion.
+L'espace privé de l'user sera géré dans le module PokemonModule dans lequel l'on pourra ajouter les éléments nécessaires.
+Mais l'on mettra dans le module racine un composant loggin pour que l'user puisse se connecter. Cette feature n'est pas relative à la gestion des pokémons.
+**Quelles features dans quels modules!**
+
+## Les services
+
+Enrichissement avec des services.
+Les composants lsit et detail vont avoir besoin d'accèder aux pokémons et d'effectuer des opérations dessus. L'on va centraliser ces opérations et données dans un **service**. Ce service sera utilisable pour tous les composants du module pokémon afin de leurs fournir un accèset des méthodes pour la gestion des pokémons.
+
+### Créer un service
+
+Fournir des données et des méthodes de gestion des pokémons à tous les composants du PokemonModule.
+
+Objectif?
+Masquer à nos composants la façon dont on récupèrer les données et le fonctionnement interne de certaines méthodes, on peut factoriser des comportements communs à certains composants.
+
+ng generate service pokemon/pokemon mais dans le module Pokemon (pokemon nom du dossier) et nom service
+
+ng generate service pokemon/pokemon --dry-run indique ce qu'angular cli aurait fait si l'on exécute la cmd.
+
+pokemon.service.ts
+
+@injectable = décorateur
+permet d'indiquer à Angular que notre service peut lui même avoir d'autres dépendances. Pour brancher ce service avec le mécanisms d'injection de dépendances d'Angular.
+Utilisable ailleurs dans l'appli, dans les constructeurs des comoposants et importer d'autres services dans le service.
+
+@injectable est caché dans @component, @pipe, ...
+
+    import { Injectable } from '@angular/core';
+
+    @Injectable({
+        // décorateur permet d'indiquer à Angular que notre service peut lui même avoir d'autres dépendances. Pour brancher ce service avec le mécanisms d'injection de dépendances d'Angular.
+        providedIn: 'root'
+        // cette ppt indique à Angular que l'on veut utiliser la même instance du service à travers toute l'app. Nous ne créerons jamais d'instance nous même
+        })
+        export class PokemonService {
+
+        constructor() { }
+    }
+
+On va donc pouvoir créer un service avec des méthodes qui serviront ailleurs dans l'application.
+Cela déchargera les composants, en utilisant les méthodes écrites dans le service.
+Utilisable par list et detail.
+
+getPokemonList => renvoie liste des pokémon
+getPokemonById(id)
+plus une méthode outil getPokemonTypeList pour la lsite des types autorisés.
+
+### Consommer un service
+
+Comment utiliser le service créer => injection dans les composants list et detail et essayer voir comment on peut s'en servir pour allèger le code des composants.
+
+Ne jamais le créer comme un simple objet dans le constructeur avec new => 
+le composant ne saît pas comment créer le pokemonService, il faudrait maj le constructeur constamment en cas de changement du service,
+création nouvelle instance avec new, donc on perd le mécanisme qu'Angular garantit que l'on a qu'une instance du service dans le projet,
+lors du développement d'un service, le consommateur du service, le composant ne doit pas se demander comment fonctionne le service à l'intérieur.
+
+    constructor(
+        private router: Router,
+        private pokemonService: PokemonService
+    ) {}
+    Récupération d'une instance unqiue du PokemonService
+
+Il faut maintenant l'utiliser, lorsque l'on initialise la liste des pokémons => pokemonList: Pokemon[] = POKEMONS;  retirer et passer par le service.
+En cas de changement on aura que la méthode à changer.
+
+### Linjection de dépendance
+
+Nous verrons également comment délmimiter un espace dans notre application depuis lequel le service sera disponible.
+Angular dispose de son propre framework d'injection, et on ne peut pas vraiment développer une applicaiton sans cet outil.
+
+**L'injection de dépendances est en fait un modèle de développement ou design pattern , dans lequel chaque classe reçoit ses dépendances d'une source externe plutôt qu'en les créant elle-même.**
+Le framexork d'injection possède un injecteur, dans ce cas on l'utilise pour gérer les dépendances de nos classes sans s'occuper de les gérer.
+main.ts:
+
+    platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.error(err));
+    // injecteur créé par angular à l'échelle de l'app pendant le process de démarrage
+Par contre, l'on doit enregistrer des fournisseurs pour rendre disponible le service là où nous en avons besoin: module, composant, application.
+
+### Fournir un service au niveau de l'application
+
+Parfois l'on a besoin de rendre un service disponible au niveau de l'ensemble de l'application.
+Si on se rend côté code dans le service PokemonService fait: 
+
+    providedIn: 'root'
+
+On fournit notre service à l'ensemble de l'application grâce à l'injecteur racine **root**.
+Mais il devrait idéalement n'être que disponible pour les fonctionnalités qui concernent que les pokémons, on niveau du module.
+L'on va voir comment injecter ce service uniquement dans le module concerné.
+
+### Fournir un service au niveau du module
+
+Il faut modifier l'injecteur, on ne veut plus l'injecteur racine, on el palce dans le module.
+
+### Fournir un service au niveau d'un composant
+
+Ca a peu d'intêret, car chaque composant aura une instance du service qui est différente, on perd donc un peu le **pattern singleton = travailler avec une instance unique du service** dans le projet.
+
+Dans @component => providers: [PokemonService], l'on aura dans le composant une instance du service et dans le pokemon module une autre.
+
+## Les formulaires
+
+### Un formulaire d'édition
+
+Ajout d'un formulaire pour éditer un pokémon.
+
+### Présentation des formulaires pilotés par le template
+
+Deux modules différents sont utilisables avec Angular:
+FormsModule et ReactivFormsModule.
+
+FormsModule développe une partie importante du formulaire dans le template, on parle de template driven forms(débutant, petit formulaire).
+Le second, plus centré sur le développement du formulaire côté composant.
+Ils proveinnent de la même librairie @angular-forms.
+
+Il y a deux directives: ngForm et ngModel, elles viennent du module forms.
+### La directive ngForm
+
+A partir du moment où le module a été importé, la directive ngForm devient actoive sur toutes les balises form disponible dans le module où est importé le formsModule.
+Nous n'avon spas besoin d'ajouter d'autres sélecteurs dans les templates pour chaque formulaire.
+Pour chaque formulaire où elle est appliquée la directive ngForm va créer une instance d'un objet nommé formGroup au niveau global du formulaire.
+
+notification lors de la soumission ,et informations des erreurs user.
+
+### La directive ngModel
+
+Doit s'appliquer sur chacun des champs du formulaire.
+Elle crée une instance d'un objet nommé formControl pour chaque champ du formulaire comme input ou select, chaque instance de formControl constituera une brique élémentaire du formulaire qui encapsulera l'état donné d'un champ, il a pour rôle de traquer la valeur du champ, les intéractions avec l'user, la validité des données saisies.
+Chaque formControl doit être définie avec un nom: il faut ajouter l'attribut name à la balise HTML associée.
+Lorsqu'elle est utilisée au sein d'une balise form, la directive s'occupe pour nous de l'enregistrer comme un élément fils de ce formulaire.
+Combiné avec la précédente on peut savoir en temps réel si le formulaire est valide opu non.
+
+On peutnutiliser la directive ngModelGroup pour créer des sous groupes de champs à l'intérieur du formulaireElle s'occupe de mettre en place une liaison de données bidirectionnelles pour chacun des champs du formulaire, cela permet de gérer les intéractions user côté template et les saisies côté composants. Elle s'occupe également d'ajouter ou retirer des classes sur chaque champ, l'on peut savoir si un user a cliqué ou non sur un champ,... => msg erreur.
+
+### Mettre en place le module FormsModule
+
+On va l'ajouter dans app.module car les deux modules de l'application en ont besoin.
+
+Avant nos modules, import niveau racine et modulePokemon.
+
+### Créer un formulaire
+
+Nos besoins:
+- édition de certaines propriétés d'un pokémon, pas l'id ni date, types, points de vie, dégâts, nom => 4champs,
+- composant à part entière chargé de gérer les données saisies par l'user pour éditer un pokémon,
+- template et composant dans deux fichiers séparés.
+
+### Générer le formulaire
+
+ng generate component pokemon/pokemon-form --inline-template=false
+
+### Implémenter la logique du formulaire
+
+ngOnInit => récup liste de tous les pokémons
+vérifier avec une méthode hasType si pokémon possède où non le type en paramètre,
+user va sélectionner un type, il faut pouvoir modifier le pokémon avec le nouveau type coché ou décoché,
+submit.
+
+### Présentation du template du formulaire
+
