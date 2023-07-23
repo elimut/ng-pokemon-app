@@ -984,3 +984,80 @@ Voir add component.
 Il faut ajouter la route, et bouton d'édition sur l'image du pokémon pour arriver sur le formulaire.
 
 Dans les routes.
+
+## Programmation réactive
+
+Elément indispensable pour les applications.
+Comment communiquer avec un serveur distant?
+
+Il y a plusieurs manières de faire:
+**appels sur le réseau avec des promesses, ou avec les observables et la programmation réactive.**
+
+### Le fonctionnement des promesses
+
+Elles sont natives en JS depuis l'arrivée de ES6.
+Ca n'est plus un objet interne à Angular, on peut les utiliser sans de nouvelles importations.
+
+Elles sont là pour essayer de simplifier la programmation asynchrone, qui désigne un mode de fonctionnement dans lequel les opérations sont non bloquantes.
+L'user peut continuer l'application web sans que le site soit bloqué quand on fait un appel au serveur. On peut aussi utiliser des fonctions call back pour gérer les appels asynchrones, mais les promesses sont plus pratiques.
+La création d'une promesse avec la classe promise => association impliciteune méthode then qui a deux arguments: une call back de succès et une ensuite call back d'erreur. Ainsi, lorsqu'une promesse a réussie, c'est la call back de succès qui est appelée, sinon c'est celle d'erreur qui est invoquée.
+
+     let recupereUser = function(idUser) {
+        <!-- renvoie une promesse qui contient l'objet user correspondant. Renvoie une promesse avec les infos du serveur -->
+        return new promise(funtion(resolve, reject) {
+            <!-- appel async au serveur pour récupèrer les infos d'un user -->
+            let user = rsponde.data.user;
+
+            if(response.status === 200) {
+                resolve(user);
+            } else {
+                reject('Cet utilisateur n'existe pas');
+            }
+        });
+     };
+
+    recupereUser(idUser)
+        .then(function(user) {
+            console.log(user);
+            this.user = user;
+        }, function(error) {
+            console.log(error);
+        });
+        <!-- avec méthode then pour pouvoir profiter de la réponse de la promesse, function anonyme -->
+
+ES6 permet d'améliorer cela avec les **Arrow functions**, elles sont très utilisées avec la programmation asynchrone car elles permettent de remplacer des fonctions anonymes qui sont omniprésentes dans les appels asynchrones en JS avec une syntaxe plus élégante.
+
+    recupereUser(idUser) 
+        .then(user => {
+            console.log(user);
+            this.user = user;
+        },error => console.log(error);
+    )
+Les promesses ont des limites, notamment quand il faut gérer un certains nombres de requêtes dans un délai très court => programmation réactive.
+
+### Qu'est ce que la programmation réactive?
+
+Est une nouvelle manière d'appréhender la programmation asynchrone.
+C'est une façon différente de concevoir une application.
+L'idée est de considérer les intéractions qui se déroulent dans l'application comme des événements sur lesquels on peut effectuer des opérations regroupements, filtrage, combinaisons, ...
+
+Ainsi, des événements comme des clic de souris deviennet des flux d'événements asynchrones auxquels on peut s'abonner pour ensuite pour pouvoir y réagir.
+Et il est possible de créer des flux à partir de tout et n'import quoi:
+événements côté nav avec déclencheurs et côté serveur en traitant des requêtes à la BDD ou à des services tiers.
+Toutes ces séquences d'événements = **flux**.
+
+**Programmation réactive = programmation avec des flux de données asynchrones**.
+
+De manière générale, tous ces événements sont poussés par un producteur de données vers un consommateur.
+Notre rôle sera de définir des écouteurs d'événements, c'est à dire des **consommateurs**, sous forme de fonctions pour réagir aux différents flux qui sont les producteurs de données.
+
+Les écouteurs d'événements sont nommés des **observeurs**, et le flux lui-même, le sujet observé, **observable**.
+Lorsque l'on s'abonne à un flux pour capter ces événements, on dit que l'on s'**inscrit** ou s'**abonne** à ce flux.
+
+### Qu'est ce qu'un flux?
+
+Un flux est une séquence d'événements en cours qui sont ordonnés dans le temps.
+Si on observe un user qui clique plusieurs fois sur un bouton pour une raison quelconque, la succession des clics peut être modélisée comme un flux d'événements. L'on peut appliquer des opérations sur ce flux d'événements.
+
+Exemple:
+l'on souhaite détecter lesz doubles clis user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
