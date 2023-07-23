@@ -902,3 +902,85 @@ submit.
 
 ### Présentation du template du formulaire
 
+    <input type="text" class="form-control" id="name"
+                    required
+                    pattern="^[a-zA-Z0-9àéèç]{1,25}$"
+                   [(ngModel)]="pokemon.name" name="name"
+                   #name="ngModel">
+                   <!-- règle de validation au HTML lié à Angular pour la validté du champ -->
+                   <!-- ppt ngModel crochet => property binding qui permet de pousser les données de la classe du composant vers le template + ()  syntaxe de liason des event, pour remonter des event du template vers sa classe -->
+                   Permet liaison bidirectionnelle, modif pokemon info côté composant et vue se met à jour.
+
+### Présentation des règles de validation
+
+Quelles restrictions souhaitons nous implémenter sur chaque champ du formulaire?
+
+nom: champ obligatoire, chaîne de caratère de 1 à 25 lettre,
+pv: nombre entre 0 et 999,
+pv: nombre entre 0 et 99,
+types: 1 à 3 types.
+Tous les champs sont obligatoires.
+
+**required => obligatoire + pattern => permet de définir une expression régulière pour valider un champ.**
+
+>regex => expression régulière (regular expression), permettent de représenter des modèles de chaînes de caractère.
+
+### Ajouter des règles de validation standard
+
+Champ name:
+    required
+    pattern="^[a-zA-Z0-9àéèç]{1,25}$"
+    chaîne de caratère de 1 à 25 caractères, quantifieur {1,25} ^$ =>uniquement ce qui est indiqué
+
+### Créer une règle de validation personnalisée
+
+On a une dernière méthode à implémenter pour la règle de validation des types de pokémons.
+On implémente isTypeValid qui prend en paramètre un type et doit renvoyer un booleen => classe du composant pour définir la signature de la méthode.
+
+### Prévenir l'user en cas d'erreur
+
+Si erreur submit sera verrouillé, l'on doit le prévenir sur ce qui ne fonctionne pas.
+L'on va utiliser les classes ajoutées automatiquement par la directive ngModel afin de faire:
+utiliser ces classes avec le CSS pour la bordure en fonction de la validité, et utiliser les classes avec les variables de template et ngIf pour afficher un message en cas d'erreur sur un champ.
+
+### Ajouter des indicateurs visuels pour un
+
+NgModel et ngForm permettent de créer des classes CSS automatiquement  sur lesquelles l'on pourra intéragir, et diront si tel est valide ou non, intéraction ou non, ... 
+Ajout CSS pour venir intercepter les classes pilotées par angular et pouvoir automatiquement mettre à jour le style du formulaire.
+
+pokemon-form.component:
+
+    
+    styleUrls au pluriel car peut en avoir plusieurs
+    styleUrls: ['./pokemon-form.component.css'] tablaux car plusieurs possibles
+
+app-pokemon-form n'est pas intégré dans un comoosant parent. Il n'exite pas et n'est pas relié à une route.
+
+### Afficher des messages d'erreurs aux users
+
+Nous allons combiner la liaison de propriéte hidden avec la variable de template name.
+
+    <div [hidden]="hp.valid || hp.pristine"
+        class="card-panel red accent-1">
+        Les points de vie du pokémon sont compris entre 0 et 999.
+    </div>
+Si champ mal renseigné.
+Message d'erreur est masqué si la propriété name est valide ou non modifiée, grâce à l'attribut pristine.
+
+### Intégration du formulaire
+
+Création d'un composant EditComponentPokemon, son rôle sera de matcher avec l'URL que l'on va créer qui sera /edit/pokemon/pokemon/:id au niveau du routing.
+Le pokemonForm sera un composant fils pour construire la vue.
+
+ng generate component pokemon/edit-pokemon 
+
+On va avoir besoin du pokemon courant, on le récupère côté logique du composant.
+Pourquoi refaire un composant?
+l'on pourra réutiliser le formulaire pour gérer le cas d'ajout d'un pokémon dans l'application, pplus souple,
+séparation des objectifs, le formualire en soit est dézjà une tâche conséquente pour mériter son composant.
+
+Voir add component.
+
+Il faut ajouter la route, et bouton d'édition sur l'image du pokémon pour arriver sur le formulaire.
+
+Dans les routes.

@@ -34,4 +34,9 @@ export class DetailPokemonComponent implements OnInit {
     this.router.navigate(['/pokemons']);
     // param du router, bouton retour, dans un tab. import router. ppt navigate du router.
   }
+
+  goToEditPokemon(pokemon: Pokemon) {
+    this.router.navigate(['/edit/pokemon', pokemon.id]);
+    // redirige au clic sur formulaire d'édition
+  }
 }

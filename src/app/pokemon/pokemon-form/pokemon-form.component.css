@@ -1,0 +1,9 @@
+/* interception classes fournier par Angular */
+.ng-valid[required] {
+    border-left: 5px solid #42A948;
+}
+/* précision avec att required que sur les champs name, pv,... */
+.ng-invalid:not(form) {
+    border-left: 5px solid #A94442;
+}
+/* pas des éléments de types form comme input select sauf niveau formulaire car Angular si qlq chose invalide va le mettre sur tout le formulaire... */

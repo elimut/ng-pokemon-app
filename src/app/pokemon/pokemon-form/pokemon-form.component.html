@@ -1,4 +1,6 @@
 <form *ngIf="pokemon" (ngSubmit)="onSubmit()" #pokemonForm="ngForm">
+<!-- si j'ai un pokemon avec id valde => formulaire. event ngSubmit, construit par dessus event natif du DOM dans le nav. décla #var référencée par le template, var référencée vers l'élément du DOM form, dans la var référencée du template attribution du rsl de la directive ngForm => on l'utilise pour déclarer une var directement dans le template, cette var va devenir un objet gérée par angular (erx: etat de validité du form en temps réel) -->
+<!-- ngForm formulaire nv global -->
     <div class="row">
       <div class="col s8 offset-s2">
         <div class="card-panel">
@@ -11,11 +13,15 @@
                     pattern="^[a-zA-Z0-9àéèç]{1,25}$"
                    [(ngModel)]="pokemon.name" name="name"
                    #name="ngModel">
-    
+                   <!-- règle de validation au HTML lié à Angular pour la validté du champ -->
+                   <!-- ppt ngModel crochet => property binding qui permet de pousser les données de la classe du composant vers le template + ()  syntaxe de liason des event, pour remonter des event du template vers sa classe. Combi des deux => liaison de données bidirectionnelle -->
+                   <!-- rst du ngModel qui en interne pour Angular est un objet métier qui va représenter un chamo sera attribué àune var réf dans le template. On va pour voir binder cette ppt pour la réutiliser voir ci-dessous-->
+                  <!-- ngModel un champ -->
             <div [hidden]="name.valid || name.pristine"
                   class="card-panel red accent-1">
                   Le nom du pokémon est requis (1-25).
             </div>
+            <!-- si champ valide on garde si champ intouché on attend l'intéraction au moins 1 fois -->
           </div>
     
           <!-- Pokemon hp -->
@@ -30,6 +36,8 @@
                    class="card-panel red accent-1">
                    Les points de vie du pokémon sont compris entre 0 et 999.
              </div>
+             <!-- Si champ mal renseigné.
+            Message d'erreur est masqué si la propriété name est valide ou non modifiée, grâce à l'attribut pristine. -->
           </div>
     
           <!-- Pokemon cp -->
@@ -58,6 +66,7 @@
                   [checked]="hasType(type)"
                   [disabled]="!isTypesValid(type)"
                   (change)="selectType($event, type)"/>
+                  <!-- si 3 champs désactive les checkbox, si un seul on freeze également => disabled -->
                 <span [attr.for]="type">
                   <div class="{{ type | pokemonTypeColor }}">
                     {{ type }}
@@ -73,6 +82,7 @@
             <button type="submit"
               class="waves-effect waves-light btn"
               [disabled]="!pokemonForm.form.valid">
+              <!-- bindig sur ppt diabled , bouton en permanence désactivé si form invalide, pokemonform est la var du haut réf dans le template  qui est le rst de la directive ngForm -->
               Valider</button>
           </div>
     
@@ -81,4 +91,5 @@
     </div>
   </form>
   <h3 *ngIf="!pokemon" class="center">Aucun pokémon à éditer...</h3>
+  <!-- si URL avec id inconnu -->
   
