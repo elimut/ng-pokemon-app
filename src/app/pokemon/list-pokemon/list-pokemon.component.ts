@@ -19,10 +19,15 @@ export class ListPokemonComponent implements OnInit {
     private pokemonService: PokemonService
   ) {}
 
+  // ngOnInit() {
+  //   this.pokemonList = this.pokemonService.getPokemonList();
+  // }
+  // // accès liste grâce au service
   ngOnInit() {
-    this.pokemonList = this.pokemonService.getPokemonList();
+    this.pokemonService.getPokemonList()
+      .subscribe(pokemonList => this.pokemonList = pokemonList);
   }
-  // accès liste grâce au service
+  // subscribe abo à l'observable qui fait une req réseau et retourne la liste, on va recevoir une list de pokemon.Une fois reçue sera attr à la ppt pokemonList
 
   goToPokemon(pokemon: Pokemon) {
     this.router.navigate(['/pokemon', pokemon.id]);

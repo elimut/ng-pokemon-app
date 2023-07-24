@@ -1,5 +1,5 @@
 <form *ngIf="pokemon" (ngSubmit)="onSubmit()" #pokemonForm="ngForm">
-<!-- si j'ai un pokemon avec id valde => formulaire. event ngSubmit, construit par dessus event natif du DOM dans le nav. décla #var référencée par le template, var référencée vers l'élément du DOM form, dans la var référencée du template attribution du rsl de la directive ngForm => on l'utilise pour déclarer une var directement dans le template, cette var va devenir un objet gérée par angular (erx: etat de validité du form en temps réel) -->
+<!-- si j'ai un pokemon avec id valide => formulaire. event ngSubmit, construit par dessus event natif du DOM dans le nav. décla #var référencée par le template, var référencée vers l'élément du DOM form, dans la var référencée du template attribution du rsl de la directive ngForm => on l'utilise pour déclarer une var directement dans le template, cette var va devenir un objet gérée par angular (erx: etat de validité du form en temps réel) -->
 <!-- ngForm formulaire nv global -->
     <div class="row">
       <div class="col s8 offset-s2">

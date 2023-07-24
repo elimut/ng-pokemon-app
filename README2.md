@@ -1060,4 +1060,135 @@ Un flux est une séquence d'événements en cours qui sont ordonnés dans le tem
 Si on observe un user qui clique plusieurs fois sur un bouton pour une raison quelconque, la succession des clics peut être modélisée comme un flux d'événements. L'on peut appliquer des opérations sur ce flux d'événements.
 
 Exemple:
-l'on souhaite détecter lesz doubles clis user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
+l'on souhaite détecter les doubles clics user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
+
+Fonction throttle => permet de tranformer un flux initial, en un nouceau flux selon des critères donnés.
+
+### Traitement des flux
+
+On peut faire plus sidfssdgsmple que de s'abonner à un flux.
+Les flux peuvent émettre trois types de réponses différentes, pour chaque type de réponse on peut définir une fonction exécuter.
+
+1- une fonction peut traiter les différentes valeurs de la réponse en un nombre, un tableau, des objets, ...
+2- une fonction pour traiter le cas d'erreur,
+3- une fonction pour traiter le signal de fin (flux terminé et n'émettra plus d'event).
+
+Les event du flux représentent soit les valeurs de la réponse en cas de succès, soit des erreurs ou des terminaisons.
+
+### La lirairie RxJs
+
+Pour faciliter l'implémentation de la programmation réactive, on utilise souvent des librairies.
+La bibliothèque la plus populaire pour la programmation réactive dans l'écosystème JS est RxJS.
+
+### Les observables
+
+Dans RxJS, un flux d'event est représenté par un objet = observable.
+Ils sont très similaires à des tableaux comme ils contiennent une collection de valeurs. Un observable ajoute juste la notion de valeur reportée dans le temps.
+Dans un tableau, toutes les valeurs sont disponibles immédiatement dans un observable, en revanche les valeurs viendront au fur et à mesure plus tard dans le temps.
+On peut traiter un observable avec des opérateurs similaires à ceux des tableaux.
+
+Exemple:
+
+- fonction take => récupère les n premiers éléments d'un flux et se débarasser des autres, les autres éléments du flux n'apparaissent plus dans le flux tranformé,
+- fonction map => applique la fonction passée en paramètre sur chaque event, et retourne le résultat,
+- fonction filter => permet de filtrer les event qui répondent positivement aux prédicats passé en paramètre, 
+- -fonction merge => fusion de deux flux,
+- fonction subscribe => elle applique une fonction passée en paramètre à chaque event reçu dans le flux. Cette méthode accepte une deuxième fonction en paramètre consacrée à la gestion d'erreur. Lorsque le flux est terminé, il enverra un event de terminaison que l'on peut détecter avec une troisième fonction. 
+
+Imaginons un observable dans lequel nous remplacerons les events par des nombres:
+
+    Observable.fromArray([1, 2, 3, 4, 5])
+    .filter(x => x > 2 ) //3, 4, 5
+    .map(x => x * 2) //6, 8, 10
+    .subscribe(x => console.log(x)); //affiche le résultat
+    création d'un observable à partir d'un tableau
+
+C'est le même fonctionnement que pour les flux. Un observable est une simple connexion asynchrone dont les events arrivent au cours du temps.
+On peut construire des observables depuis une requête AJAX, depuis un event du nav, ... tout ce qui est asynchrone.
+
+### Choisir entre oservable et promesse
+
+Les observables sont différents des promesses, même s'il y ressemble par certaines aspects, car ils gèrent tout deux des valeurs asynchrones.
+Mais un observable n'est pas à usage unique, il continuera à émettre des event jusquà ce qu'ils émettent un event de terminaison ou que l'on se désabonne de lui.
+Les promesses sont plus simples et souvent suffisantes pour une application.
+Il est possible de transformer un observable en une promesse grâce à la méthode toPromise de RxJS.
+
+    import 'rxjs/add/operator/toPromise;
+
+    function giveMePromiseFromObservable() {
+
+        return Observable.fromArray([1, 2, 3, 4, 5])
+            .filter(x => x > 2 ) //3, 4, 5
+            .map(x => x * 2) //6, 8, 10
+            .toPromise();
+    }
+    
+## Les requêtes HTTP
+
+Communiquer avec un serveur distant, pour rechercher, éditer, etc un pokémon et garder en mémoire les changements.
+API = interfae de programmation, permet de communiquer avec un service distant depuis l'application.
+
+### Mettre en place le client HttpClientModule
+
+Angular on a une librairie clientHttp pour aller requêter des seveurs distants, il est compris dans Angular.
+
+Il faut le fournir au niveau du module racine pour y avoir accès partout.
+Il ne fournit pas d'éléments au niveau de la vue (pipe, directive,...), on peut l'importer une fois à la racine, et l'injecter dans tous les composants.
+=> app.module.ts
+
+### Simuler une API web
+
+Jusqu'à maintenant l'on a stocké et récupéré nos données depuis une le PokemonService, dans une constante.
+On aimerait pouvoir communqiuer avec un serveur distant.
+Angular permet de simuler une API grâce à un module npm: npm install angular-in-memory-web-api --save-dev
+
+Création d'un service pour simuler une bdd dans Angular:
+ng generate service in-memory-data à la racine.
+
+Ajout d'une interface InMemoryDataService, qui va demander d'implémenter une méthode pour simuler la BDD.
+
+app-module import du module de la librairie pour simuler l'API: HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { dataEncapsulation: false}), => dataEncapsulation à false sinon par défaut la librairie à chaque requ^pete va encapsuler nos réponses dans un élément data.
+
+### Requêter un serveur distant
+
+PokemonService.ts
+
+Il faut faire deux méthodes de ce service: get pokemon list car l'on ne va pas faire une constante mais une requête réseau et ensuite récupèrer les données.
+On va avoir un délai de réponse, avant la constante synchrone, maintenant requêter le serveur asynchrone.
+On va développer du code sans les données à l'instant t.
+Import client HTTP, l'injecter dans le PokemonService.
+
+
+     getPokemonList(): Observable<Pokemon []> {
+        // réception d'une donnée qui va rriver dans le temps qui contient un tab de pokemon, on ne retourne pas directement les pokémons. On retourne un flux
+        return this.http.get<Pokemon[]>('api/pokemons').pipe(
+            tap((pokemonList) => console.table(pokemonList)),
+            catchError((error) => {
+            console.log(error);
+            return of([]);
+            })
+        )
+        // httpCLient d'angular par défaut renvoie des flux qui oeuvent être typé, la requête get contient un tab de pokemon et on passe une URL vers une API
+        // opérateur .pipe définir ce que l'on veut faire en plus du tmt de la requête: log resp et erreurs
+        // req http get avec le client http angular et on reçoit un observable, on peut spécifier que la réponse contient une liste de pokémon. En pram de la méthode get URL, une fois qu'on a la réponse, on la log et si erreur log erreur et on retourne un tab vide
+        // opérateur rxjs tap = équivalent console log adapté à un observable, il n'intervient pas sur la requête en elle même mais on va pouvoir venir faire des op à chaque nouvelles rep
+        // catch evite l'app de crasher
+  }
+
+getPokemonList est utilisée ailleurs pas des compossants et l'on vient de changer la signature de la méthode (fonctionnement).
+
+### Récupèrer un pokémon avec son id
+
+PokemonService, l'on va se passer de la constante.
+
+### Gestion des erreurs
+
+Re factoriser.
+Méthode PokemonService code redondant, l'on aura également d'autres requêtes.
+Création d'une méthode privée accessible seulement pour les méthodes du service.
+
+### Consommer des données asynchrones
+
+Adapter nos composants pour  accèder à nos nouvelles données asynchrones: détail, list et edit.
+
+
