@@ -1191,4 +1191,29 @@ Création d'une méthode privée accessible seulement pour les méthodes du serv
 
 Adapter nos composants pour  accèder à nos nouvelles données asynchrones: détail, list et edit.
 
+Pendant une seconde message: aucun pokemon, c'est Angular qui met du temps à faire la requête donc le pokemon n'est pas disponible, lié à l'async.
 
+
+### L'asynchrone et Angular
+
+Problème dans le formulaire, car fichier statique les modifications étaient communes.
+Pour persister les changements, avec une API, il faut les écrire sur le serveur c'est à dire avec une requête http pour enregistrer les modifications.
+
+### Créer une méthode de modification
+
+Côté service, on va implémenter une méthode pour persister les données vers le serveur.
+updatePokemon dans PokemonService
+
+    updatePokemon(pokemon: Pokemon): Observable<Pokemon|undefined> {
+        // ici le paramètre, le corps part dans la requête HTTP pas que dans URL. Il faut préciser au client HTTP que l'on envoie des données dans notre requête.On ajoute un header => content type application/json. En cas d'erreur on renvoie undefined
+        const httpOptions = {
+        headers: new Headers({ 'Content-Type': 'application/json'})
+        };
+
+        return this.http.put('api/pokemons', pokemon, httpOptions).pipe(
+        tap((response) => this.log(response)),
+        catchError((error) => this.handleError(error, undefined))
+        )
+        // put pour persister des modifications d'un objet déjà existant:
+        // .pipe ajout des tmt à l'observable
+  }

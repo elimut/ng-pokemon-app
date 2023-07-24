@@ -27,7 +27,7 @@ export class ListPokemonComponent implements OnInit {
     this.pokemonService.getPokemonList()
       .subscribe(pokemonList => this.pokemonList = pokemonList);
   }
-  // subscribe abo à l'observable qui fait une req réseau et retourne la liste, on va recevoir une list de pokemon.Une fois reçue sera attr à la ppt pokemonList
+  // subscribe abo à l'observable qui fait une req réseau et retourne la liste, on va recevoir une list de pokemon.Une fois reçue sera attr à la ppt pokemonList du composant, elle est poussée dans la pokemonList.
 
   goToPokemon(pokemon: Pokemon) {
     this.router.navigate(['/pokemon', pokemon.id]);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Pokemon } from './pokemon';
 // import { POKEMONS } from './mock-pokemon-list';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of, tap } from 'rxjs';
 
 @Injectable(
@@ -55,7 +55,24 @@ constructor(private http: HttpClient) {
     );
   }
 
-  private log(response: Pokemon[]|Pokemon|undefined) {
+  updatePokemon(pokemon: Pokemon): Observable<Pokemon|undefined> {
+    // ici le paramètre, le corps part dans la requête HTTP pas que dans URL. Il faut préciser au client HTTP que l'on envoie des données dans notre requête.On ajoute un header => content type application/json. En cas d'erreur on renvoie undefined
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+    };
+
+    return this.http.put('api/pokemons', pokemon, httpOptions).pipe(
+      tap((response) => this.log(response)),
+      catchError((error) => this.handleError(error, undefined))
+    )
+    // put pour persister des modifications d'un objet déjà existant:
+    // .pipe ajout des tmt à l'observable
+  }
+
+  // private log(response: Pokemon[]|Pokemon|undefined) {
+  //   console.table(response);
+  // }
+  private log(response: any) {
     console.table(response);
   }
 

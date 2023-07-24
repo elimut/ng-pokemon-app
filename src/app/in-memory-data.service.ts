@@ -8,7 +8,8 @@ import { POKEMONS } from './pokemon/mock-pokemon-list';
 export class InMemoryDataService implements InMemoryDbService{
 
   createDb() {
-    return { POKEMONS };
+    const pokemons = POKEMONS;
+    return { pokemons };
   }
 }
 // simule une API REST avec des opérations crud. Simule des données qui viennent du serveur

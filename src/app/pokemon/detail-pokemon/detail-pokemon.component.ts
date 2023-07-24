@@ -26,7 +26,8 @@ export class DetailPokemonComponent implements OnInit {
     // récup de l'id dans la route à l'instant t
 
     if(pokemonId) {
-      this.pokemon = this.pokemonService.getPokemonById(+pokemonId);
+      this.pokemonService.getPokemonById(+pokemonId) 
+        .subscribe(pokemon => this.pokemon = pokemon);
     } 
   }
 

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   templateUrl: './pokemon-form.component.html',
   styleUrls: ['./pokemon-form.component.css']
 })
+
 export class PokemonFormComponent {
 
   @Input() pokemon: Pokemon;
@@ -57,9 +58,16 @@ export class PokemonFormComponent {
   // 2 cas d'erreur à définir moins d'un type ou plus de trois => bloquer les checkbox, sinon valid renvoie true
 
   onSubmit() {
-    console.log('Submit form!');
+    // console.log('Submit form!');
     // mise en place router pour redir sur le pokémon modifié
-    this.router.navigate(['/pokemon', this.pokemon.id]);
+    // this.router.navigate(['/pokemon', this.pokemon.id]);
+    this.pokemonService.updatePokemon(this.pokemon)
+      .subscribe((pokemon) => {
+        if(pokemon) {
+          this.router.navigate(['/pokemon', this.pokemon.id]);
+        } 
+      })
+      // on récup le pokemon renvoyé par update et l'on redirige vers la page qui vient d'être éditée
   }
-
 }
+
