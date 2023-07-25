@@ -1217,3 +1217,9 @@ updatePokemon dans PokemonService
         // put pour persister des modifications d'un objet déjà existant:
         // .pipe ajout des tmt à l'observable
   }
+
+### Persister les modifications user
+
+Suite à l'ajout de la méthode, il faut s'en servir pour sauvegarder les données.
+
+pokemonForm dans onSubmit => redir, on veut appeler la méthode, une fois changé on effectue la redirection.
