@@ -27,7 +27,7 @@ export class EditPokemonComponent implements OnInit {
     ) {
 
     }
-    // récup id dans la route /pokemon/edit/:id + pokemonService donc 2 injextions dans le composant
+    // récup id dans la route /pokemon/edit/:id + pokemonService donc 2 injections dans le composant
 
     ngOnInit(): void {
         const pokemonId: string|null = this.route.snapshot.paramMap.get('id');

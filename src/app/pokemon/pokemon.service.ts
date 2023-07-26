@@ -55,19 +55,44 @@ constructor(private http: HttpClient) {
     );
   }
 
-  updatePokemon(pokemon: Pokemon): Observable<Pokemon|undefined> {
+  // updatePokemon(pokemon: Pokemon): Observable<Pokemon|undefined> {
+    // travail avec null API interne
+  updatePokemon(pokemon: Pokemon): Observable<null> {
     // ici le paramètre, le corps part dans la requête HTTP pas que dans URL. Il faut préciser au client HTTP que l'on envoie des données dans notre requête.On ajoute un header => content type application/json. En cas d'erreur on renvoie undefined
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     };
 
     return this.http.put('api/pokemons', pokemon, httpOptions).pipe(
+      // url, corps de la requête et headers pour dire que l'on transmet tout cela en json
       tap((response) => this.log(response)),
-      catchError((error) => this.handleError(error, undefined))
-    )
+      // catchError((error) => this.handleError(error, undefined))
+      catchError((error) => this.handleError(error, null))
+    );
     // put pour persister des modifications d'un objet déjà existant:
     // .pipe ajout des tmt à l'observable
   }
+
+  deletePokemonById(pokemonId: number): Observable<null> {
+    return this.http.delete(`api/pokemons/${pokemonId}`).pipe(
+      tap((response) => this.log(response)),
+      // catchError((error) => this.handleError(error, undefined))
+      catchError((error) => this.handleError(error, null))
+    );
+    // .pipe ajout des tmt à l'observable
+  }
+
+  addPokemon(pokemon: Pokemon): Observable<null> {
+      const httpOptions = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+      };
+
+      return this.http.post('api/pokemon', pokemon, httpOptions).pipe(
+        tap((response) => this.log(response)),
+        catchError((error) => this.handleError(error, null))
+      );
+  }
+
 
   // private log(response: Pokemon[]|Pokemon|undefined) {
   //   console.table(response);

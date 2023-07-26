@@ -31,6 +31,11 @@ export class DetailPokemonComponent implements OnInit {
     } 
   }
 
+  deletePokemon(pokemon: Pokemon) {
+    this.pokemonService.deletePokemonById(pokemon.id)
+      .subscribe(() => this.goToPokemonList());
+  }
+
   goToPokemonList() {
     this.router.navigate(['/pokemons']);
     // param du router, bouton retour, dans un tab. import router. ppt navigate du router.
@@ -39,5 +44,10 @@ export class DetailPokemonComponent implements OnInit {
   goToEditPokemon(pokemon: Pokemon) {
     this.router.navigate(['/edit/pokemon', pokemon.id]);
     // redirige au clic sur formulaire d'édition
+  }
+
+  goToAddPokemon(pokemon: Pokemon) {
+    this.router.navigate(['/add/pokemon']);
+    // redirige au clic sur formulaire d'ajout
   }
 }

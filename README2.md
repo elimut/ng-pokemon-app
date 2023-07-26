@@ -1060,7 +1060,6 @@ Un flux est une séquence d'événements en cours qui sont ordonnés dans le tem
 Si on observe un user qui clique plusieurs fois sur un bouton pour une raison quelconque, la succession des clics peut être modélisée comme un flux d'événements. L'on peut appliquer des opérations sur ce flux d'événements.
 
 Exemple:
-<<<<<<< Updated upstream
 l'on souhaite détecter les doubles clics user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
 
 Fonction throttle => permet de tranformer un flux initial, en un nouceau flux selon des critères donnés.
@@ -1148,7 +1147,7 @@ ng generate service in-memory-data à la racine.
 
 Ajout d'une interface InMemoryDataService, qui va demander d'implémenter une méthode pour simuler la BDD.
 
-app-module import du module de la librairie pour simuler l'API: HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { dataEncapsulation: false}), => dataEncapsulation à false sinon par défaut la librairie à chaque requ^pete va encapsuler nos réponses dans un élément data.
+app-module import du module de la librairie pour simuler l'API: HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { dataEncapsulation: false}), => dataEncapsulation à false sinon par défaut la librairie à chaque requête va encapsuler nos réponses dans un élément data.
 
 ### Requêter un serveur distant
 
@@ -1224,6 +1223,34 @@ updatePokemon dans PokemonService
 Suite à l'ajout de la méthode, il faut s'en servir pour sauvegarder les données.
 
 pokemonForm dans onSubmit => redir, on veut appeler la méthode, une fois changé on effectue la redirection.
-=======
-l'on souhaite détecter les doubles clis user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
->>>>>>> Stashed changes
+
+erreur lors dela validation >null, on reçoit null dansle PokemonService, au lieu de renvoyer Pokemon (modifié) ou undefined renvoie null, cela est dû au fonctionnement del'API interne d'Angular.
+On va donc travailler avec null, erreur ou pas.
+
+### Supprimer un pokemon
+
+PokemonServiceméthode suppression pokemon
+
+### Ajouter un pokemon
+
+PokemonService méthode pour persister le pokemon côté serveur
+composant add qui va réutiliser le formulaire Pokemon mais pour en créer un nouveau
+interface bouton rediriger vers page d'ajout
+
+### Méthode post
+
+PokemonService post
+
+### Créer un composant Pokemon
+
+addComponenentPokemon
+
+ng generate component pokemon/add-pokemon  
+
+On a récupèrer le formulaire, pokemon.ts fait un constructeut.
+Le problème c'est que le submit du form est pour un update.
+
+### Adapter le formulaire
+
+Comment détecter au niveau du composant si l'on est dans le cas d'un ajout ou édition.
+

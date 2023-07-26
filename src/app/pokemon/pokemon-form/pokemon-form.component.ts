@@ -62,11 +62,7 @@ export class PokemonFormComponent {
     // mise en place router pour redir sur le pokémon modifié
     // this.router.navigate(['/pokemon', this.pokemon.id]);
     this.pokemonService.updatePokemon(this.pokemon)
-      .subscribe((pokemon) => {
-        if(pokemon) {
-          this.router.navigate(['/pokemon', this.pokemon.id]);
-        } 
-      })
+      .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));//, si erreur (error) => snackbar error);
       // on récup le pokemon renvoyé par update et l'on redirige vers la page qui vient d'être éditée
   }
 }
