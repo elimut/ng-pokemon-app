@@ -1060,6 +1060,7 @@ Un flux est une séquence d'événements en cours qui sont ordonnés dans le tem
 Si on observe un user qui clique plusieurs fois sur un bouton pour une raison quelconque, la succession des clics peut être modélisée comme un flux d'événements. L'on peut appliquer des opérations sur ce flux d'événements.
 
 Exemple:
+<<<<<<< Updated upstream
 l'on souhaite détecter les doubles clics user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
 
 Fonction throttle => permet de tranformer un flux initial, en un nouceau flux selon des critères donnés.
@@ -1223,3 +1224,6 @@ updatePokemon dans PokemonService
 Suite à l'ajout de la méthode, il faut s'en servir pour sauvegarder les données.
 
 pokemonForm dans onSubmit => redir, on veut appeler la méthode, une fois changé on effectue la redirection.
+=======
+l'on souhaite détecter les doubles clis user et ignorer les simples, l'on va considérer qu'il y a un double clic s'il y a moins de 250ms d'écart entre deux clics.
+>>>>>>> Stashed changes
