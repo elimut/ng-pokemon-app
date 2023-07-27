@@ -56,6 +56,9 @@ constructor(private http: HttpClient) {
   }
 
   searchPokemonList(term: string): Observable<Pokemon[]> {
+    if(term.length <= 1){
+      return of([]);// retourne un flux sous forme de tab vide
+    }
     return this.http.get<Pokemon[]>(`api/pokemons/?name=${term}`).pipe( //requête sur une propriété du pokemon, ici name
       tap((response) => this.log(response)),
       catchError((error) => this.handleError(error, []))

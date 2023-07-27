@@ -1372,3 +1372,61 @@ Visuel à la méthode searchPokemon.
 Transformer searchTerms, liste de demande user, en un pokemon$ = flux de résultats concrets de recherche pour l'user.
 
 ngOnInit
+
+### Optimiser un flux de requêtes
+
+Une recherche avec une lettre, tout s'affiche et recherche vide liste de tous les résultats.
+Il faudrait au moins deux lettres pour la pertinenece et éviter de surcharger le serveur.
+
+### Ajouter une icône de chargement 
+
+Lors du chargement "aucun pokemon affiché", plus lente. L'api simulée met 500ms à nous donner une réponse.
+ng generate component pokemon/loader 
+
+Dans détail et form.
+
+## Authentification et sécurité
+
+[Angular Guards](https://angular.io/guide/router-tutorial-toh#milestone-5-route-guards)
+
+Pour mettre en place une authentification l'on a besoin des guards => mécanisme de protection utilisé par Angular pour mettre en place l'authentification mais pas seulement.
+
+### Qu'est-ce qu'un guards?
+
+Les guards peuvent être utilisés pour gérer toutes sortes de scénarios liés à la navigation, rediriger un user qui tente d'accèder à une route, l'obliger à s'authentifier...
+Ils retournent un booleen pour contrôler le comportement de la nvaigation.
+Le booleen peut être retourné un booléen de manière synchrone, ou asynchrone, mais souvent, il ne peut pas renvoyer un résultat de manière synchrone car il atend une réponse.
+Observable de type booléen, ou une promesse et le routeur attendra la réponse pour agir sur la navigation. Même s'il est conçu pour intéragir avec la navigation, il en existe d'autres:
+- le guard CanActivate qui peut influencer sur la navigation d'une route et notamment la bloquer, utilisé pour construire le système d'authentification,
+- CanActivateChild: sur la navigation d'une route fille,
+- Resolve: peut effectuer une récupération de données avant de naviguer,
+- CanLoad: peut gérer la navigation vers un sous module chargé de manière asynchrone.
+
+Cependant si un guards retourne false, tous les autres guards seront annulés et la navigation entière sera bloquée.
+
+### Mettre en place un guard
+
+Hello world de l'authentification => msg dans la console quand l'user tente d'accèder à l'édition d'un pokémon.
+
+Détecter l'endroit pour indiquer le blocage.
+ng generate guard auth =>CanActivate
+
+Généré dans app.
+
+pokemon.module:
+
+    { path: 'edit/pokemon/:id', component: EditPokemonComponent, canActivate: [authGuard]}, import authGuard et appliqué à la route d'édition en plus du chemin et composant.
+Avant de donner l'autorisation à cette route on appelle un guard. i false bloque l'accès à l'édition.
+
+### Créer un service d'authentification
+
+Mettre en place le guard sur toutes nos routes, et mettre en place un système d'authentification qui sera mis en place dans les guards.
+
+Redirection des user anonymes vers un formulaire de connexion.
+On sécurisetoutes les routes du pokemonModule.
+
+Il faut un nouveau service dédié à l'authentification et qui va permettre de dire si l'user est connecté ou nom.
+Le rôle du guard c'est de piloter le routing.
+L'authentification vérifie les id.
+
+ng generate service auth
