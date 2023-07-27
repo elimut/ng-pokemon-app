@@ -1254,3 +1254,121 @@ Le problème c'est que le submit du form est pour un update.
 
 Comment détecter au niveau du composant si l'on est dans le cas d'un ajout ou édition.
 
+Construction route add/pokemon pour onSubmit cas ajout.
+
+    { path: 'pokemon/add', component: AddPokemonComponent} dasn pokemonModule
+
+Dans formulaire on va récupèrer l'URL courante pour distinguer si add ou edit. pokemon-form (on va avoir besoin du router).
+
+    ngOnInit() {
+        this.types = this.pokemonService.getPokemonTypeList();
+        this.isAddForm = this.router.url.includes('add');
+        // recup url et vérif si add dans url pour le form add sinon edit
+    }
+
+    if(this.isAddForm) {
+      this.pokemonService.addPokemon(this.pokemon)
+        .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));
+        // redir vers pokemon créé après maj. L'id vient de l'api dans le cas d'un ajout, le backend va côté serveur attribuer un id unique. côté front ko car chaque client a une appli Angular qui vit dans son nav pour savoir si un id est dipo ou non => backend. add pokemon il faut ajouter des elmts, pokemon service on ne veut pas retourner nul mais le pokemon ajouté
+
+Lors de l'ajout de l'image plus d'édition possible => template du pokemon form, ajout champ picture qui lors de la création d'un nouveau pokemon, pouvoir ajouter une image, seulement que dans le cadre d'un ajout.
+
+Voir pour définir un regex picture ajout template:
+
+    <!-- Pokemon picture si ajout -->
+          <div *ngIf="isAddForm" class="form-group">
+            <label for="picture">Image</label>
+            <input type="url" class="form-control" id="picture"
+                    required
+                   [(ngModel)]="pokemon.picture" name="picture"
+                   #picture="ngModel">
+                   <!-- règle de validation au HTML lié à Angular pour la validté du champ -->
+                   <!-- ppt ngModel crochet => property binding qui permet de pousser les données de la classe du composant vers le template + ()  syntaxe de liaison des event, pour remonter des event du template vers sa classe. Combi des deux => liaison de données bidirectionnelle -->
+                   <!-- rst du ngModel qui en interne pour Angular est un objet métier qui va représenter un chamo sera attribué àune var réf dans le template. On va pour voir binder cette ppt pour la réutiliser voir ci-dessous-->
+                  <!-- ngModel un champ -->
+            <div [hidden]="picture.valid || picture.pristine"
+                  class="card-panel red accent-1">
+                  L'image du pokémon est requise.
+            </div>
+            <!-- si champ valide on garde si champ intouché on attend l'intéraction au moins 1 fois -->
+          </div>
+
+### Ajouter un lien vers le formulaire d'ajout
+
+Ajout d'un bouton sur la liste, pour rediriger vers le formulaire d'ajout.
+id a été généré de manière dynamique par le backend.
+
+
+## La librairie RxJS
+
+### Présentation du champ de recherche
+
+Fontionnalité de recherche via leurs noms.
+Ce champ de recherche devra implémenter l'auto complétion.
+Pour le moment, l'on a effectué des requêtes http simples = one shot, requête résultat.
+Dans certains cas, on peut en lancer une l'annuler,et en relancer une autre avant que le serveur n'ait répondu, cela est plus difficle à implémenter.
+
+### Rechercher des pokémons dynamiquement
+
+Requête au serveur qui prend un paramètre de recherche, et qui va retourner tous les pokémons qui commencent ou contiennent par le paramètre.
+
+PokemonService (logique accès aux données) => méthode recherche liste en fonction d'un terme donné.
+
+    searchPokemonList(term: string):obeservable<Pokemon[]> {
+        return this.http.get<Pokemon[]>(`api/pokemon/?name=${term}`).pipe( //requête sur une propriété du pokemon, ici name
+        tap((response) => this.log(response)),
+        catchError((error) => this.handleError(error, []))
+        ); 
+    }
+    fonction qui retourne un flux de données avec une liste de pokemon qui correspondent au terme de recherche de l'user.
+
+### Construire un composant de recherche
+
+Le composant contiendra le champ de recherche.
+
+ng generate component pokemon/search-pokemon --inline-template=false
+
+    searchTerms = new Subject<string>();
+    // la classe Subject appartient à RxJS pas Angular, permet de stocker les recherches successives de l'user, stockées dans un tableau de string => flux dans le tps des recherches user  {..."a".."ab"...} ce compoirte comme un observable sauf que le subject peut être consommé contrairement à l'observable. On oeut ainsi piloter un observable 
+    pokemons$: Observable<Pokemon[]>;
+    // observable ne peut que être subscribe pour recevoir les données dans le temps 
+    // {...pokemonList(a)..pokemonList(ab)..}
+
+On va construire un flux de données pas seulement de le consommer, à artir de ces données qui arrivent dans le temps on va afficher les résultats qui correspondent à la recherche avec l'obs.
+Evite d'annuler les requêtes.
+Pour pousser des données dans notre flux searchTerms, à chaque fois que l'user recherche un term => on prend le subject searchTerms, et on va venir utiliser la méthode next pour pousser le terme de recherche tapé.
+Recherche dans le template appel cette méthode search. et on va pousser son terme de recherche dans search
+
+    <div class="row">
+        <div class="col s12 m6 offset-3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="input-field">
+                    <!-- #searchBox = var réf dans le template pour pousser le terme qui vient d'être tapé, on récupère sa valeur courante -->
+                        <input #searchBox 
+                                (keyup)="search(searchBox.value)" 
+                                placeholder="Search a pokemon"> 
+                        <!-- affichage des rst: class collection et affcihage d'une liste de liens qui correspondent aux pokemons de la rech user, clique sur le lien redir sur le pokemon -->
+                        <div class="collection">
+                            <!-- pokemons$ convention est un observable, flux de données var avec flux de données $ + pipe async => que sur flux de données, évite de faire subscribe (dans OnInit)-->
+                            <a *ngFor="let pokemon of pokemons$ | async" 
+                                (click)="goToDetailPokemon(pokemon)"
+                                class="collection-item"
+                            >
+                                {{ pokemon.name }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+Il faut le brancher.
+
+### Construire un observable personnalisé
+
+Visuel à la méthode searchPokemon.
+Transformer searchTerms, liste de demande user, en un pokemon$ = flux de résultats concrets de recherche pour l'user.
+
+ngOnInit

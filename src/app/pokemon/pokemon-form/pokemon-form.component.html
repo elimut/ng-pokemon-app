@@ -23,6 +23,24 @@
             </div>
             <!-- si champ valide on garde si champ intouché on attend l'intéraction au moins 1 fois -->
           </div>
+
+          <!-- Pokemon picture si ajout -->
+          <div *ngIf="isAddForm" class="form-group">
+            <label for="picture">Image</label>
+            <input type="url" class="form-control" id="picture"
+                    required
+                   [(ngModel)]="pokemon.picture" name="picture"
+                   #picture="ngModel">
+                   <!-- règle de validation au HTML lié à Angular pour la validté du champ -->
+                   <!-- ppt ngModel crochet => property binding qui permet de pousser les données de la classe du composant vers le template + ()  syntaxe de liason des event, pour remonter des event du template vers sa classe. Combi des deux => liaison de données bidirectionnelle -->
+                   <!-- rst du ngModel qui en interne pour Angular est un objet métier qui va représenter un chamo sera attribué àune var réf dans le template. On va pour voir binder cette ppt pour la réutiliser voir ci-dessous-->
+                  <!-- ngModel un champ -->
+            <div [hidden]="picture.valid || picture.pristine"
+                  class="card-panel red accent-1">
+                  L'image du pokémon est requise.
+            </div>
+            <!-- si champ valide on garde si champ intouché on attend l'intéraction au moins 1 fois -->
+          </div>
     
           <!-- Pokemon hp -->
           <div class="form-group">

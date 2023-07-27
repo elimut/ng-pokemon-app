@@ -14,6 +14,8 @@ export class PokemonFormComponent {
   @Input() pokemon: Pokemon;
   // passer ppt entrée pokemon pour éditer dans le forms
   types: string[];
+  // décla ppt type boolean pour récup l'URL courante
+  isAddForm: boolean;
 
   constructor(
     private pokemonService: PokemonService,
@@ -22,6 +24,8 @@ export class PokemonFormComponent {
 
   ngOnInit() {
     this.types = this.pokemonService.getPokemonTypeList();
+    this.isAddForm = this.router.url.includes('add');
+    // recup url et vérif si add dans url pour le form add sinon edit
   }
 
   hasType(type: string) : boolean{
@@ -61,9 +65,17 @@ export class PokemonFormComponent {
     // console.log('Submit form!');
     // mise en place router pour redir sur le pokémon modifié
     // this.router.navigate(['/pokemon', this.pokemon.id]);
-    this.pokemonService.updatePokemon(this.pokemon)
-      .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));//, si erreur (error) => snackbar error);
-      // on récup le pokemon renvoyé par update et l'on redirige vers la page qui vient d'être éditée
+    // this.pokemonService.updatePokemon(this.pokemon)
+    //   .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));//, si erreur (error) => snackbar error);
+    //   // on récup le pokemon renvoyé par update et l'on redirige vers la page qui vient d'être éditée
+    if(this.isAddForm) {
+      this.pokemonService.addPokemon(this.pokemon)
+        .subscribe((pokemon: Pokemon) => this.router.navigate(['/pokemon', pokemon.id]));
+        // redir vers pokemon créé après maj. L'id vient de l'api dans le cas d'un ajout, le backend va côté serveur attribuer un id unique. côté front ko car chaque client a une appli Angular qui vit dans son nav pour savoir si un id est dipo ou non => backend
+    } else {
+      this.pokemonService.updatePokemon(this.pokemon)
+        .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));
+    }
   }
 }
 

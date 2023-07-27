@@ -55,6 +55,13 @@ constructor(private http: HttpClient) {
     );
   }
 
+  searchPokemonList(term: string): Observable<Pokemon[]> {
+    return this.http.get<Pokemon[]>(`api/pokemons/?name=${term}`).pipe( //requête sur une propriété du pokemon, ici name
+      tap((response) => this.log(response)),
+      catchError((error) => this.handleError(error, []))
+    ); 
+  }
+
   // updatePokemon(pokemon: Pokemon): Observable<Pokemon|undefined> {
     // travail avec null API interne
   updatePokemon(pokemon: Pokemon): Observable<null> {
@@ -82,12 +89,12 @@ constructor(private http: HttpClient) {
     // .pipe ajout des tmt à l'observable
   }
 
-  addPokemon(pokemon: Pokemon): Observable<null> {
+  addPokemon(pokemon: Pokemon): Observable<Pokemon> {
       const httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json'})
       };
 
-      return this.http.post('api/pokemon', pokemon, httpOptions).pipe(
+      return this.http.post<Pokemon>('api/pokemons', pokemon, httpOptions).pipe( //cats le return en Pokemon, cette méthode retourne un objet de type Poemon
         tap((response) => this.log(response)),
         catchError((error) => this.handleError(error, null))
       );

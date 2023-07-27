@@ -6,9 +6,7 @@ import { Pokemon } from '../pokemon';
   template: `
     <h2>Add</h2>
     <app-pokemon-form [pokemon]="pokemon"></app-pokemon-form>
-  `,
-  styles: [
-  ]
+  `
 })
 
 export class AddPokemonComponent implements OnInit {

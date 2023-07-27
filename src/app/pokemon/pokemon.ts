@@ -9,10 +9,10 @@ export class Pokemon {
     created: Date;
 
     constructor( //créa constructeur pour addPokemon afin d'avoir des éléments à proposer à l'user
-        name: string = 'Enter a name',
+        name: string = '',
         hp: number = 100,
         cp: number = 10,
-        picture: string = 'https://assets.pokrmon.com/assets/cm2s/img/pokedex/detail/xxx.png',
+        picture: string = 'https://assets.pokemon.com/assets/cms2/img/pokedex/detail/xxx.png',
         types: Array<string> = ['Normal'],
         created: Date = new Date()
     ) {

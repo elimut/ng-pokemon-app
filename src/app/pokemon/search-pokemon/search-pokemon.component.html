@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col s12 m6 offset-m3">
+        <div class="card">
+            <div class="card-content">
+                <div class="input-field">
+                <!-- #searchBox = var réf dans le template pour pousser le terme qui vient d'être tapé, on récupère sa valeur courante -->
+                    <input #searchBox 
+                            (keyup)="search(searchBox.value)" 
+                            placeholder="Search a pokemon"> 
+                    <!-- affichage des rst: class collection et affcihage d'une liste de liens qui correspondent aux pokemons de la rech user, clique sur le lien redir sur le pokemon -->
+                    <div class="collection">
+                        <!-- pokemons$ convention est un observable, flux de données var avec flux de données $ + pipe async => que sur flux de données, évite de faire subscribe (dans OnInit)-->
+                        <a *ngFor="let pokemon of pokemons$ | async" 
+                            (click)="goToDetail(pokemon)"
+                            class="collection-item"
+                        >
+                            {{ pokemon.name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
