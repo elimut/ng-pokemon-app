@@ -2,17 +2,17 @@ import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, RouterStateSnapshot }
     from '@angular/router';
   
-@Injectable()
+// @Injectable()
 
-class AuthGuard {
+// class AuthGuard {
 
-  canActivate(
-    route: ActivatedRouteSnapshot, 
-    state: RouterStateSnapshot
-    ): boolean {
-      return true;
-    }
-  }
+//   canActivate(
+//     route: ActivatedRouteSnapshot, 
+//     state: RouterStateSnapshot
+//     ): boolean {
+//       return true;
+//     }
+//   }
 
   export const authGuard: CanActivateFn =  ( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
     console.log('ok');

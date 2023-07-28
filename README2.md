@@ -1430,3 +1430,7 @@ Le rôle du guard c'est de piloter le routing.
 L'authentification vérifie les id.
 
 ng generate service auth
+
+On va ensuite, dans le guard, récupèrer le résultat de cette fonction afin de dire si oui ou non l'user peut zaccèder à l'édition.
+
+Voir si authService renvoie true ou false.
