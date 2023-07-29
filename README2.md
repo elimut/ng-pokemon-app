@@ -1431,6 +1431,7 @@ L'authentification vérifie les id.
 
 ng generate service auth
 
+<<<<<<< HEAD
 ### Ajout d'une page de connexion sécurisée
 
 Création d'un composant qui va venir matcher avec la nouvelle route avec un forlulaire de connexion, pour permettre aux users de se connecter.
@@ -1438,3 +1439,8 @@ Création d'un composant qui va venir matcher avec la nouvelle route avec un for
 ng generate component login --inline-template=false
 
 Déclarer le nouveau composant dans app-routing
+=======
+On va ensuite, dans le guard, récupèrer le résultat de cette fonction afin de dire si oui ou non l'user peut zaccèder à l'édition.
+
+Voir si authService renvoie true ou false.
+>>>>>>> 8779ec46466010a98984e5dd98c3b1990b364074
