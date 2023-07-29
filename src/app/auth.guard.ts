@@ -1,24 +1,30 @@
-import { Injectable, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateFn, RouterStateSnapshot }
+import {inject } from '@angular/core';
+import { CanActivateFn, Router }
     from '@angular/router';
+import { AuthService } from './auth.service';
   
-@Injectable()
-
-class AuthGuard {
-
-  canActivate(
-    route: ActivatedRouteSnapshot, 
-    state: RouterStateSnapshot
-    ): boolean {
-      return true;
-    }
-  }
-
-  export const authGuard: CanActivateFn =  ( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
-    console.log('ok');
+export class AuthGuard{
+  
+  constructor (
+    public authService: AuthService,
+    public router: Router
+  ) {}
+}
+  export const authGuard: CanActivateFn =  (route, state): boolean => {
+    // console.log('ok');
     // return inject(AuthGuard).canActivate(route,state);
     // obtention instance de AuthGuard et appel de sa méthode
-    return true;
+    const authService = inject(AuthService);
+    const router = inject(Router);
+
+    if(authService.isLoggedIn) {
+      return true;
+      // auto accès autre page car loggué
+    }
+    
+    router.navigate(['/login']);
+    return false;
+    // si non loggé redir page de connexion
   }
 // angular va regarder sur la route en question si canActivate renvoie true ou false. si true redir ok sinon bloque. Le guard doit être attaché à une route pour autorisé l'accès ou non
 

@@ -1430,3 +1430,11 @@ Le rôle du guard c'est de piloter le routing.
 L'authentification vérifie les id.
 
 ng generate service auth
+
+### Ajout d'une page de connexion sécurisée
+
+Création d'un composant qui va venir matcher avec la nouvelle route avec un forlulaire de connexion, pour permettre aux users de se connecter.
+
+ng generate component login --inline-template=false
+
+Déclarer le nouveau composant dans app-routing
